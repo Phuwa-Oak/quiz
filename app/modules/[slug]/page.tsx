@@ -23,39 +23,39 @@ type PageProps = {
 };
 
 export function generateStaticParams() {
-  return hqModules.map((module) => ({ slug: module.slug }));
+  return hqModules.map((item) => ({ slug: item.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const module = getModuleBySlug(slug);
+  const hqModule = getModuleBySlug(slug);
 
-  if (!module) {
+  if (!hqModule) {
     return {
       title: "Module not found | HQ Management",
     };
   }
 
   return {
-    title: `${module.titleEn} | HQ Management`,
-    description: module.description,
+    title: `${hqModule.titleEn} | HQ Management`,
+    description: hqModule.description,
   };
 }
 
 export default async function ModulePage({ params }: PageProps) {
   const { slug } = await params;
-  const module = getModuleBySlug(slug);
+  const hqModule = getModuleBySlug(slug);
 
-  if (!module) {
+  if (!hqModule) {
     notFound();
   }
 
-  const Icon = module.icon;
+  const Icon = hqModule.icon;
 
   return (
     <AppShell>
       <div className="space-y-6">
-        <section className={`relative overflow-hidden rounded-[2.25rem] border p-6 sm:p-8 ${module.tone.card}`}>
+        <section className={`relative overflow-hidden rounded-[2.25rem] border p-6 sm:p-8 ${hqModule.tone.card}`}>
           <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-white/70 blur-3xl" />
           <div className="absolute -bottom-16 left-1/3 h-44 w-44 rounded-full bg-white/60 blur-3xl" />
           <div className="relative">
@@ -68,20 +68,20 @@ export default async function ModulePage({ params }: PageProps) {
             </Link>
             <div className="grid gap-6 lg:grid-cols-[1fr_24rem] lg:items-end">
               <div>
-                <div className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold ${module.tone.soft}`}>
+                <div className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold ${hqModule.tone.soft}`}>
                   <Icon className="h-4 w-4" />
-                  {module.group.titleTh}
+                  {hqModule.group.titleTh}
                 </div>
                 <h1 className="mt-5 text-4xl font-black tracking-tight text-stone-950 sm:text-5xl">
-                  {module.titleTh}
+                  {hqModule.titleTh}
                 </h1>
-                <p className={`mt-2 text-2xl font-bold ${module.tone.text}`}>{module.titleEn}</p>
-                <p className="mt-4 max-w-3xl text-base leading-8 text-stone-600">{module.description}</p>
+                <p className={`mt-2 text-2xl font-bold ${hqModule.tone.text}`}>{hqModule.titleEn}</p>
+                <p className="mt-4 max-w-3xl text-base leading-8 text-stone-600">{hqModule.description}</p>
               </div>
               <div className="rounded-[1.5rem] border border-white/80 bg-white/75 p-5 shadow-xl shadow-stone-200/60">
                 <p className="text-xs font-bold uppercase tracking-[0.24em] text-stone-400">Quick actions</p>
                 <div className="mt-4 grid gap-2">
-                  {module.actions.slice(0, 3).map((action, index) => (
+                  {hqModule.actions.slice(0, 3).map((action, index) => (
                     <button
                       key={action}
                       className={`flex items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-bold transition ${
@@ -101,11 +101,11 @@ export default async function ModulePage({ params }: PageProps) {
         </section>
 
         <section className="grid gap-4 md:grid-cols-3">
-          {module.metrics.map((metric, index) => (
+          {hqModule.metrics.map((metric, index) => (
             <div key={metric} className="cream-card rounded-[1.65rem] p-5">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-bold text-stone-500">{metric}</p>
-                <span className={`rounded-full px-3 py-1 text-xs font-black ${module.tone.soft}`}>
+                <span className={`rounded-full px-3 py-1 text-xs font-black ${hqModule.tone.soft}`}>
                   {index === 0 ? "Main" : index === 1 ? "Alert" : "Report"}
                 </span>
               </div>
@@ -139,7 +139,7 @@ export default async function ModulePage({ params }: PageProps) {
             <div className="mt-5 grid gap-3 md:grid-cols-[1fr_auto_auto]">
               <label className="flex items-center gap-3 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-500 shadow-sm">
                 <Search className="h-4 w-4" />
-                <input className="w-full bg-transparent outline-none" placeholder={`ค้นหา ${module.titleTh}`} />
+                <input className="w-full bg-transparent outline-none" placeholder={`ค้นหา ${hqModule.titleTh}`} />
               </label>
               <button className="inline-flex items-center justify-center gap-2 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm font-bold text-stone-600 shadow-sm">
                 <CalendarDays className="h-4 w-4" />
@@ -147,7 +147,7 @@ export default async function ModulePage({ params }: PageProps) {
               </button>
               <button className="inline-flex items-center justify-center gap-2 rounded-2xl bg-stone-950 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-stone-300">
                 <Plus className="h-4 w-4" />
-                {module.actions[0]}
+                {hqModule.actions[0]}
               </button>
             </div>
 
@@ -165,9 +165,11 @@ export default async function ModulePage({ params }: PageProps) {
                 >
                   <div className="col-span-5 min-w-0">
                     <p className="truncate font-bold text-stone-950">
-                      {module.titleEn} #{String(row).padStart(3, "0")}
+                      {hqModule.titleEn} #{String(row).padStart(3, "0")}
                     </p>
-                    <p className="mt-1 truncate text-sm text-stone-500">{module.fields[row % module.fields.length]}</p>
+                    <p className="mt-1 truncate text-sm text-stone-500">
+                      {hqModule.fields[row % hqModule.fields.length]}
+                    </p>
                   </div>
                   <div className="col-span-3 hidden md:block">
                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
@@ -192,7 +194,7 @@ export default async function ModulePage({ params }: PageProps) {
           <aside className="space-y-6">
             <div className="cream-card rounded-[2rem] p-5 sm:p-6">
               <div className="flex items-center gap-3">
-                <div className={`flex h-11 w-11 items-center justify-center rounded-2xl ${module.tone.icon}`}>
+                <div className={`flex h-11 w-11 items-center justify-center rounded-2xl ${hqModule.tone.icon}`}>
                   <SlidersHorizontal className="h-5 w-5" />
                 </div>
                 <div>
@@ -201,7 +203,7 @@ export default async function ModulePage({ params }: PageProps) {
                 </div>
               </div>
               <div className="mt-5 space-y-3">
-                {module.fields.map((field) => (
+                {hqModule.fields.map((field) => (
                   <div key={field} className="rounded-2xl border border-stone-200 bg-white/80 p-3">
                     <label className="text-xs font-bold text-stone-500">{field}</label>
                     <div className="mt-2 h-10 rounded-xl bg-stone-100" />
@@ -214,9 +216,9 @@ export default async function ModulePage({ params }: PageProps) {
               <p className="text-xs font-bold uppercase tracking-[0.24em] text-stone-400">Page workflow</p>
               <h2 className="mt-2 text-xl font-black text-stone-950">โครงสร้างการทำงาน</h2>
               <div className="mt-5 space-y-4">
-                {module.actions.map((action, index) => (
+                {hqModule.actions.map((action, index) => (
                   <div key={action} className="flex gap-3">
-                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-black ${module.tone.soft}`}>
+                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-black ${hqModule.tone.soft}`}>
                       {index + 1}
                     </div>
                     <div>
